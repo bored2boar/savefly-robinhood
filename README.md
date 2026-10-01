@@ -44,7 +44,7 @@ It is a digital fly built from a real biological connectome, living inside a mar
 
 ![SaveFly](Screenshot2.jpg)
 
-## The Fly Runs on Robinhood Chain
+## The Game Lives on Robinhood Chain
 
 SaveFly isn't a web game that happens to read blockchain data.
 
@@ -94,26 +94,26 @@ like that as the token page.
 
 Set in `src/savefly.config.json`, no need to edit the HTML:
 
-| Mode | Data source | Shared state | What you need |
-|---|---|---|---|
-| `provider` | the browser reads the API directly | no - badge `live · solo` | static hosting only |
-| `csv` | a log written by the collector | yes - badge `live` | a 24/7 machine for the collector |
-| *(no config)* | generator | - | development only |
+| Mode          | Data source                        | Shared state             | What you need                    |
+| ------------- | ---------------------------------- | ------------------------ | -------------------------------- |
+| `provider`    | the browser reads the API directly | no - badge `live · solo` | static hosting only              |
+| `csv`         | a log written by the collector     | yes - badge `live`       | a 24/7 machine for the collector |
+| *(no config)* | generator                          | -                        | development only                 |
 
 **No paid RPC is needed in either setup.** For GitHub Pages use
-`provider` with the mint address, in a single file. Details: `README-PARTNER.md`,
-section 0.
+`provider` with the contract address, in a single file. Details:
+`README-PARTNER.md`, section 0.
 
 The collector has two sources (`ingest/config.json` -> `source`):
 
-| Source | Ceiling | Requests at 10k trades/min |
-|---|---|---|
-| `aggregator` | ~3400 significant trades/min | unreachable |
-| `rpc` | **none** | **150/min** |
+| Source       | Ceiling                      | Requests at 10k trades/min |
+| ------------ | ---------------------------- | -------------------------- |
+| `aggregator` | ~3400 significant trades/min | unreachable                |
+| `rpc`        | **none**                     | **150/min**                |
 
-`rpc` pulls blocks by slot via `logsSubscribe` + `getBlock`,
-so the cost does not depend on the trade rate. It needs a paid RPC
-endpoint - the public one throttles.
+`rpc` reads blocks through the Robinhood Chain JSON-RPC interface, so the
+cost does not depend directly on the trade rate. It requires a reliable RPC
+endpoint for production use; the public endpoint is rate-limited.
 
 ### Production run
 
@@ -130,27 +130,30 @@ node ingest/ingest.js
 # 4. serve the static files: src/ + data/
 ```
 
-The collector polls the provider and appends events to `data/events/<UTC-hour>.csv`.
-Clients read these files with Range requests, i.e. they only pull the increment.
-One process hits the provider, not every browser - otherwise the rate limits
-would be blown by the first dozen viewers.
+The collector polls the provider and appends events to
+`data/events/<UTC-hour>.csv`.
+
+Clients read these files with Range requests, i.e. they only pull the
+increment. One process hits the provider, not every browser - otherwise the
+rate limits would be blown by the first dozen viewers.
 
 ## Log format
 
 `data/events/2026-09-19T10.csv`
 
-```
-step,ts,side,sol,px,blk,sig
-0,1789812033000,-1,0.005009934,0.024630475916,448374289,57w4Rp...
-20,1789812034000,-1,2.069046758,0.024620932903,448374294,CRJD1X...
+```text
+step,ts,side,quote,px,blk,sig
+0,1789812033000,-1,0.005009934,0.024630475916,448374289,0x57w4Rp...
+20,1789812034000,-1,2.069046758,0.024620932903,448374294,0xCRJD1X...
 ```
 
 `step` - simulation step number, `side` +1 buy / -1 sell,
-`sol` - trade size in engine units (quote-token amount x `quoteScale`),
+`quote` - trade size in engine units (quote-token amount x `quoteScale`),
 `px` - token price in USD at the time of the trade,
-`blk` - slot, `sig` - transaction signature.
+`blk` - Robinhood Chain block number,
+`sig` - transaction hash.
 
-Canonical order: `step`, then `blk`, then `sig`. The signature as a
+Canonical order: `step`, then `blk`, then `sig`. The transaction hash as a
 tie-break makes the order unambiguous without trusting the source.
 
 `data/meta.json` holds genesis, the historical ATH and the list of shards.
@@ -174,7 +177,7 @@ The log is plain text, so the picture can be reproduced independently:
 node tools/replay.js
 ```
 
-```
+```text
 log         : 387 events, data
 drawdown    : 2.25%
 silk        : 0.030638  debt: 0.006704
@@ -198,7 +201,7 @@ node tools/profile.js            # frame time per function
 
 ## Structure
 
-```
+```text
 src/savefly.html      the game, one file, no dependencies
 ingest/ingest.js      event collector into CSV
 tools/engine.js       shared engine module
@@ -227,7 +230,7 @@ Done: deterministic engine, shared state over CSV, a feed layer with three
 sources, the collector, economics calibrated on live data, fresh
 launch mode.
 
-Blocking: collector uptime - a gap in the log cannot be repaired, because the provider
-only serves the last ~300 trades.
+Blocking: collector uptime - a gap in the log cannot be repaired, because the
+provider only serves the last ~300 trades.
 
 Full status and document navigation - `docs/STATUS.md`.
