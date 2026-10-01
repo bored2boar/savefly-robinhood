@@ -2,7 +2,7 @@
   "mode": "provider",
   "network": "robinhood",
   "quoteScale": 22,
-  "mint": "0x9d5041af14adf9dabba84c6069b9051a584325d3",
-  "ca":   "0x9d5041af14adf9dabba84c6069b9051a584325d3",
+  "mint": "0x98ab6bd5c27aced4d8d13da1d9163ec8815f9668",
+  "ca":   "0x98ab6bd5c27aced4d8d13da1d9163ec8815f9668",
   "buyUrl": "https://pons.fun/token/{ca}"
 }
