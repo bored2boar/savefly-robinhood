@@ -2,7 +2,8 @@
   "mode": "provider",
   "network": "robinhood",
   "quoteScale": 22,
-  "mint": "0xadab7c37d92f12123a62f1243325c89170a1bae6",
-  "ca":   "0xadab7c37d92f12123a62f1243325c89170a1bae6",
+  "pollMs": 2500,
+  "mint": "0xa3ae236b74da831cb325e752a1274e2b9c77ff33",
+  "ca":   "0xa3ae236b74da831cb325e752a1274e2b9c77ff33",
   "buyUrl": "https://www.ponsfamily.com/launchpad/{ca}"
 }
