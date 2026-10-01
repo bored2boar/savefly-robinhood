@@ -2625,7 +2625,7 @@ function drainOUT(silent){
       case 'buy':
         txTimes.push(performance.now());
         e.size>1.6?SFX.whaleBuy():SFX.buy();
-        log('Buy '+e.sol.toFixed(2)+' SOL',
+        log('Buy '+(e.sol/(FEEDCFG.quoteScale||1)).toFixed(3)+' ETH',
           (e.size>1.6?'Whale entry. ':'')+e.n+' shot'+(e.n>1?'s':'')+
           ' launched at the web.',C.g1);
         break;
