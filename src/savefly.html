@@ -2632,7 +2632,7 @@ function drainOUT(silent){
       case 'sell':
         txTimes.push(performance.now());
         e.size>1.6?SFX.whaleSell():SFX.sell();
-        log('Sell '+e.sol.toFixed(2)+' SOL',
+        log('Sell '+(e.sol/(FEEDCFG.quoteScale||1)).toFixed(3)+' ETH',
           (e.size>1.6?'Heavy dump. ':'')+'A '+(e.size>1.6?'large':'small')+
           ' spider drops onto spoke '+e.spoke+' and starts crawling in.',C.sr1);
         break;
