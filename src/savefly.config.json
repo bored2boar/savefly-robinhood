@@ -3,7 +3,7 @@
   "network": "robinhood",
   "quoteScale": 22,
   "pollMs": 2500,
-  "mint": "to be announced",
-  "ca":   "to be announced",
+  "mint": "0xacc3ecbc656f88d5ea7cee63ceaa8205296301c4",
+  "ca":   "0xacc3ecbc656f88d5ea7cee63ceaa8205296301c4",
   "buyUrl": "https://www.ponsfamily.com/launchpad/{ca}"
 }
